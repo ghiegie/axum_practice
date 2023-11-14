@@ -5,9 +5,8 @@ use axum::{
     http::{HeaderMap, Request, StatusCode},
     middleware::Next,
     response::{IntoResponse, Response},
-    Extension, Json,
+    Extension,
 };
-use serde::{Deserialize, Serialize};
 
 // dependencies from other files
 use super::SharedData;
@@ -15,8 +14,10 @@ use crate::routes_setup_lib::custom_middleware_lib::HeaderMessage;
 
 // submodule declaration
 pub mod custom_middleware_lib;
+pub mod get_json_lib;
 pub mod mirror_body_json_lib;
 pub mod query_lib;
+pub mod validate_serde_lib;
 
 pub async fn test() -> String {
     String::from("Test")
@@ -89,31 +90,4 @@ pub async fn always_errors() -> Result<(), StatusCode> {
 
 pub async fn returns_201() -> Response {
     (StatusCode::CREATED, "This is a 201".to_owned()).into_response()
-}
-
-#[derive(Serialize)]
-pub struct Data {
-    message: String,
-    count: i32,
-    username: String,
-}
-
-pub async fn get_json() -> Json<Data> {
-    let data = Data {
-        message: String::from("sample json string"),
-        count: 123,
-        username: String::from("sample json id"),
-    };
-
-    Json(data)
-}
-
-#[derive(Deserialize, Debug)]
-pub struct RequestUser {
-    username: String,
-    password: String,
-}
-
-pub async fn validate_with_serde(Json(user): Json<RequestUser>) {
-    dbg!(user);
 }

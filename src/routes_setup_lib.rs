@@ -46,7 +46,6 @@ pub fn create_routes() -> Router {
         .route("/mirror_user_agent", get(mirror_user_agent))
         .route("/mirror_custom_header", get(mirror_custom_header))
         .route("/middleware_msg", get(middleware_msg))
-        .route("/validate_data", post(validate_with_serde)) // should always handle error
         .layer(cors) // add cors as middleware fn
         .layer(Extension(shared_data)) // wrap shraed data inside an extension fore xtraction and response; then put inside layer
         .route(
@@ -56,5 +55,9 @@ pub fn create_routes() -> Router {
         .route_layer(middleware::from_fn(set_middleware_custom_header))
         .route("/always_errors", get(always_errors))
         .route("/returns_201", post(returns_201))
-        .route("/get_json", get(get_json))
+        .route("/get_json", get(get_json_lib::get_json))
+        .route(
+            "/validate_data",
+            post(validate_serde_lib::validate_with_serde),
+        ) // should always handle error
 }
