@@ -1,4 +1,5 @@
 use axum::{middleware, Router};
+use axum_practice::web_mod::mw_auth::mw_ctx_resolver;
 use std::net::SocketAddr;
 use tower_cookies::CookieManagerLayer;
 
@@ -21,6 +22,7 @@ async fn main() -> Result<()> {
         // layer insert a middleware (middleware is a mod)
         // map_response creates a middleware from an async fn that modifies responses
         .layer(middleware::map_response(main_response_mapper))
+        .layer(middleware::from_fn_with_state(mc.clone(), mw_ctx_resolver))
         // at bottom to apply the cookiemanager to other parts of the router
         .layer(CookieManagerLayer::new());
     let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
